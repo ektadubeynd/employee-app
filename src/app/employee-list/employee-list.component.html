@@ -1,0 +1,282 @@
+<section>
+  <div class="table-wrapper">
+    <table cellpadding="0" cellspacing="0">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Job Title</th>
+          <th>Age</th>
+          <th>Start Date</th>
+          <th>End Date</th>
+          <th>
+            <span>
+              Actions &nbsp;
+              <!-- <button (click)="open(true)"> + Add Details</button> -->
+              <button (click)="openModal('0')">+ Add Details</button>
+            </span>
+          </th>
+        </tr>
+        <tr class="filter-row" ngForm="filterForm" #filterForm="ngForm">
+          <th></th>
+          <th>
+            <input
+              type="text"
+              class="form-control"
+              [(ngModel)]="filterObj.name"
+              name="name"
+              #name="ngModel"
+              placeholder="Search By Name"
+              autocomplete="off"
+            />
+          </th>
+          <th>
+            <input
+              type="select"
+              class="form-control"
+              [(ngModel)]="filterObj.job"
+              name="job"
+              #job="ngModel"
+              placeholder="Search By Job"
+              autocomplete="off"
+            />
+          </th>
+          <th>
+            <input
+              type="number"
+              class="form-control"
+              [(ngModel)]="filterObj.age"
+              name="age"
+              #age="ngModel"
+              placeholder="Search By Age"
+              autocomplete="off"
+            />
+          </th>
+          <th>
+            <input
+              type="date"
+              class="form-control"
+              [(ngModel)]="filterObj.start_date"
+              name="start_date"
+              #start_date="ngModel"
+              placeholder="Search By Start Date"
+              autocomplete="off"
+            />
+          </th>
+          <th>
+            <input
+              type="date"
+              class="form-control"
+              [(ngModel)]="filterObj.end_date"
+              name="end_date"
+              #end_date="ngModel"
+              placeholder="Search By End Date"
+              autocomplete="off"
+            />
+          </th>
+          <th>
+            <div>
+              <button type="submit" (click)="filter(filterForm)">Filter</button>
+              <button type="button" (click)="filterReset(filterForm)">
+                Reset
+              </button>
+            </div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngIf="mEmployeeList.length > 0">
+          <tr *ngFor="let emp of mEmployeeList; index as i">
+            <td>{{ i + 1 }}</td>
+            <td>{{ emp.name | titlecase }}</td>
+            <td>{{ emp.job }}</td>
+            <td>{{ emp.age }}</td>
+            <td>{{ emp.start_date | date : "mediumDate" }}</td>
+            <td>
+              <span *ngIf="emp.end_date">{{
+                emp.end_date | date : "mediumDate"
+              }}</span>
+              <span *ngIf="!emp.end_date"
+                ><span class="working">Currently Working</span></span
+              >
+            </td>
+            <td>
+              <!-- <button (click)="open(false, i)">view</button> -->
+              <button (click)="openModal('1', i)">view</button>
+              <button (click)="deleteEmployeeDetails(i)" type="button">
+                delete
+              </button>
+            </td>
+          </tr>
+        </ng-container>
+        <ng-container *ngIf="mEmployeeList.length < 1">
+          <tr>
+            <td class="no-record" colspan="7">No record found</td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+</section>
+<!-- Add Details Modal -->
+<app-modal class="modal" id="0">
+  <form #empForm="ngForm">
+    <div class="form-group">
+      <label>Enter Name*</label>
+      <input
+        type="text"
+        class="form-control"
+        id="name"
+        class="form-control"
+        [(ngModel)]="empObj.name"
+        name="name"
+        #name="ngModel"
+        placeholder="Enter Name*"
+        autocomplete="off"
+        required
+      />
+      <div [hidden]="name.valid || name.pristine" class="alert alert-danger">
+        Name is required
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Enter Job Title*</label>
+      <input
+        type="text"
+        class="form-control"
+        id="job"
+        class="form-control"
+        [(ngModel)]="empObj.job"
+        name="job"
+        #job="ngModel"
+        placeholder="Enter Job Title*"
+        autocomplete="off"
+        required
+      />
+      <div [hidden]="job.valid || job.pristine" class="alert alert-danger">
+        Job Title is required
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Enter Age*</label>
+      <input
+        type="number"
+        class="form-control"
+        id="age"
+        class="form-control"
+        [(ngModel)]="empObj.age"
+        name="age"
+        #age="ngModel"
+        placeholder="Enter Age*"
+        autocomplete="off"
+        required
+      />
+      <div [hidden]="age.valid || age.pristine" class="alert alert-danger">
+        Age Title is required
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Enter Start Date*</label>
+      <input
+        type="date"
+        class="form-control"
+        id="start_date"
+        class="form-control"
+        [(ngModel)]="empObj.start_date"
+        name="start_date"
+        #startDate="ngModel"
+        placeholder="Enter Start Date*"
+        autocomplete="off"
+        required
+      />
+      <div
+        [hidden]="startDate.valid || startDate.pristine"
+        class="alert alert-danger"
+      >
+        Start Date is required
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Enter End Date</label>
+      <input
+        type="date"
+        class="form-control"
+        id="end_date"
+        class="form-control"
+        [(ngModel)]="empObj.end_date"
+        name="end_date"
+        #endDate="ngModel"
+        placeholder="Enter End Date"
+        autocomplete="off"
+      />
+    </div>
+    <div class="btn-container">
+      <button
+        type="submit"
+        [disabled]="!empForm.valid"
+        (click)="onSubmit(empForm, empObj.id)"
+      >
+        Submit
+      </button>
+      <button type="button" (click)="reset(); empForm.reset()">Reset</button>
+      <button
+        type="button"
+        class="close"
+        (click)="closeModal('0')"
+        aria-label="Close"
+      >
+        <span aria-hidden="true">Close</span>
+      </button>
+    </div>
+  </form>
+</app-modal>
+<!-- /Add Details Modal -->
+<!-- View Details Modal -->
+<app-modal class="modal" id="1">
+  <div *ngIf="employeeDetails">
+    <div class="detail-wrapper">
+      <div class="detail-row">
+        <div class="label">Name:</div>
+        <div class="value">{{ employeeDetails.name }}</div>
+      </div>
+      <div class="detail-row">
+        <div class="label">Job Title:</div>
+        <div class="value">{{ employeeDetails.job }}</div>
+      </div>
+      <div class="detail-row">
+        <div class="label">Age:</div>
+        <div class="value">{{ employeeDetails.age }}</div>
+      </div>
+      <div class="detail-row">
+        <div class="label">Start Date:</div>
+        <div class="value">
+          {{ employeeDetails.start_date | date : "mediumDate" }}
+        </div>
+      </div>
+      <div class="detail-row">
+        <div class="label">End Date:</div>
+        <div class="value">
+          {{
+            employeeDetails.end_date
+              ? (employeeDetails.end_date | date : "mediumDate")
+              : "Currently Working"
+          }}
+        </div>
+      </div>
+    </div>
+    <div class="detail-footer">
+      <button type="submit" (click)="updateForm(employeeDetails.id)">
+        Update
+      </button>
+      <button
+        type="button"
+        class="close"
+        (click)="closeModal('1')"
+        aria-label="Close"
+      >
+        <span aria-hidden="true">Cancel</span>
+      </button>
+    </div>
+  </div>
+</app-modal>
+<!-- /View Details Modal -->

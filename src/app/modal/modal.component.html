@@ -1,0 +1,14 @@
+<div class="modal" tabindex="-1" role="dialog" #myModal>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">
+          {{ id == "0" ? "Add / Update Details" : "View Details" }}
+        </h2>
+      </div>
+      <div class="modal-body">
+        <ng-content></ng-content>
+      </div>
+    </div>
+  </div>
+</div>
